@@ -7,5 +7,22 @@
   </head>
   <body>
     <script type="text/javascript" src="<%= js %>"></script>
+    <h1>color mixing</h1>
+    <hr>
+    <section id="sliders">
+      <div class="red slider">
+        <input type="range" min="0" max="255" value="43"/>
+        <div class="number">43</div>
+      </div>
+      <div class="blue slider">
+        <input type="range" min="0" max="255" value="43"/>
+        <div class="number">43</div>
+      </div>
+      <div class="green slider">
+        <input type="range" min="0" max="255" value="43"/>
+        <div class="number">43</div>
+      </div>
+    </div>
+    <section id="swatch" class="">RED</div>
   </body>
 </html>
