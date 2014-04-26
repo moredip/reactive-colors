@@ -17,6 +17,7 @@
   "dependencies": {
     "tinycolor": "~0.9.17",
     "jquery": "~2.1.0",
-    "bacon": "~0.7.10"
+    "bacon": "~0.7.10",
+    "underscore": "~1.6.0"
   }
 }
