@@ -10,21 +10,26 @@
     <h1>color mixing</h1>
     <hr>
     <section class="rgb sliders">
+      <h1>RGB</h1>
       <div class="red slider">
+        <span class="label">R</span> 
         <input type="range" min="0" max="255" value="100"/>
         <div class="number"></div>
       </div>
-      <div class="blue slider">
-        <input type="range" min="0" max="255" value="200"/>
+      <div class="green slider">
+        <span class="label">G</span> 
+        <input type="range" min="0" max="255" value="43"/>
         <div class="number"></div>
       </div>
-      <div class="green slider">
-        <input type="range" min="0" max="255" value="43"/>
+      <div class="blue slider">
+        <span class="label">B</span> 
+        <input type="range" min="0" max="255" value="200"/>
         <div class="number"></div>
       </div>
     </section>
     <section id="swatch">RED</section>
     <section class="hsl sliders">
+      <h1>HSL</h1>
       <div class="hue slider">
         <span class="label">H</span> 
         <input type="range" min="0" max="360"/>
