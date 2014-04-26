@@ -9,7 +9,7 @@
     <script type="text/javascript" src="<%= js %>"></script>
     <h1>color mixing</h1>
     <hr>
-    <section id="sliders">
+    <section class="rgb sliders">
       <div class="red slider">
         <input type="range" min="0" max="255" value="100"/>
         <div class="number"></div>
@@ -22,7 +22,24 @@
         <input type="range" min="0" max="255" value="43"/>
         <div class="number"></div>
       </div>
-    </div>
+    </section>
     <section id="swatch">RED</section>
+    <section class="hsl sliders">
+      <div class="hue slider">
+        <span class="label">H</span> 
+        <input type="range" min="0" max="360"/>
+        <div class="number"></div>
+      </div>
+      <div class="saturation slider">
+        <span class="label">S</span> 
+        <input type="range" min="0" max="1" step="0.01"/>
+        <div class="number"></div>
+      </div>
+      <div class="lightness slider">
+        <span class="label">L</span> 
+        <input type="range" min="0" max="1" step="0.01"/>
+        <div class="number"></div>
+      </div>
+    </section>
   </body>
 </html>

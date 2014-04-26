@@ -12,7 +12,8 @@ module.exports = function(lineman) {
       vendor: [
           "vendor/bower/jquery/dist/jquery.js",
           "vendor/bower/bacon/dist/bacon.js",
-          "vendor/bower/tinycolor/tinycolor.js"
+          "vendor/bower/tinycolor/tinycolor.js",
+          "vendor/bower/underscore/underscore.js"
         ]
     }
 

@@ -14,7 +14,7 @@ hr {
   margin-right: 46px;
 }
 
-#sliders {
+.sliders {
   margin: 20px 0;
   width: 100%;
 }
@@ -63,7 +63,6 @@ input[type=range]::-webkit-slider-thumb {
 
 #swatch {
   width: 100%;
-  background-image: none;
   text-align: center;
   color: white;
   text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
