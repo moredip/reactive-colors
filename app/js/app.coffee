@@ -1,18 +1,24 @@
+COMPONENTS = "red green blue hue saturation lightness".split(" ")
+
 # from tinycolor
 pad2 = (c)->
   if c.length == 1 then '0' + c else '' + c
 
+# from tinycolor
 decimalToHex = (d)->
   pad2( Math.round(d).toString(16) )
 
-COMPONENTS = "red green blue hue saturation lightness".split(" ")
-
 
 inputStreamFrom = ($input)->
-  $input.asEventStream('input')
+  stream = $input.asEventStream('input')
     .map( (e)-> $(e.target).val() )
     .toProperty( $input.val() )
     .map( parseFloat )
+
+  stream.onValue (v)->
+    console.log( $input.parent().attr("class"), v )
+
+  stream
 
 updateSwatch = ($swatch,color)->
   hashHex = "#"+color.toHex()
@@ -20,13 +26,43 @@ updateSwatch = ($swatch,color)->
     .css( "background-color", hashHex )
     .text(hashHex)
 
-labelForColorValue = (val)->
+labelForRgbValue = (val)->
   ratio = val/255
   percentage = Math.round(ratio * 100)
   hex = decimalToHex(val)
-  "#{val}/255 | #{percentage}% | #{hex}"
+  #"#{val}/255 | #{percentage}% | #{hex}"
   "#{percentage}%"
+
+componentOutputStreamsFromMainStream = (colorStream)->
+  rgbStream = colorStream.map( ".toRgb" )
+  hslStream = colorStream.map( ".toHsl" )
+
+  {
+    red: rgbStream.map( ".r" )
+    green: rgbStream.map( ".g" )
+    blue: rgbStream.map( ".b" )
+    hue: hslStream.map( ".h" )
+    saturation: hslStream.map( ".s" )
+    lightness: hslStream.map( ".l" )
+  }
+
   
+mainColorStreamFromInputSliders = ($sliders)->
+  sliderStreams = _.object( _.map( $sliders, ($slider,name)->
+    [name,inputStreamFrom($slider)]
+  ))
+
+  rgbSliderStreams = _.pick(sliderStreams,"red","green","blue")
+  hslSliderStreams = _.pick(sliderStreams,"hue","saturation","lightness")
+
+  rgbInputStream = Bacon.combineTemplate( rgbSliderStreams ).map ({red,green,blue})->
+    tinycolor({r:red,g:green,b:blue})
+
+  hslInputStream = Bacon.combineTemplate( hslSliderStreams ).map ({hue,saturation,lightness})->
+    tinycolor({h:hue,s:saturation,l:lightness})
+  
+  colorStream = Bacon.mergeAll( [rgbInputStream.changes(), hslInputStream.changes()] )
+  colorStream
 
 $ ->
   $swatch = $("#swatch")
@@ -35,49 +71,31 @@ $ ->
     [name, $(".#{name} input")]
   ))
 
+  $labels = _.object( _.map( COMPONENTS, (name)->
+    [name, $(".#{name} .number")]
+  ))
+
   sliderStreams = _.object( _.map( $sliders, ($slider,name)->
     [name,inputStreamFrom($slider)]
   ))
 
-  rgbSliderStreams = _.pick(sliderStreams,"red","green","blue")
-  hslSliderStreams = _.pick(sliderStreams,"hue","saturation","lightness")
-
-  for name,stream of rgbSliderStreams
-    stream
-      .map( labelForColorValue )
-      .assign($(".#{name} .number"), "text")
-
-  rgbColorStream = Bacon.combineTemplate( rgbSliderStreams ).map ({red,green,blue})->
-    tinycolor({r:red,g:green,b:blue})
-
-  hslColorStream = Bacon.combineTemplate( hslSliderStreams ).map ({hue,saturation,lightness})->
-    tinycolor({h:hue,s:saturation,l:lightness})
-  
-  #rgbColorStream.onValue (color)-> 
-    #console.log( "rgb color changed", color )
-
-  #hslColorStream.onValue (color)-> 
-    #console.log( "hsl color changed", color )
-    
-  debugger
-
-  colorStream = Bacon.mergeAll( [rgbColorStream.changes(), hslColorStream.changes()] )
+  colorStream = mainColorStreamFromInputSliders($sliders)
 
   colorStream.onValue (color)->
-    console.log( "color changed", color.toHexString() )
+    console.log( "color changed", color.toRgbString(), color.toHslString() )
     updateSwatch( $swatch, color )
 
-  hueStream = colorStream.map( (color)-> color.toHsl().h )
-  saturationStream = colorStream.map( (color)-> color.toHsl().s )
-  lightnessStream = colorStream.map( (color)-> color.toHsl().l )
+  componentOutputStreams = componentOutputStreamsFromMainStream( colorStream )
 
-  hueStream.assign( $sliders.hue, "val" )
-  saturationStream.assign( $sliders.saturation, "val" )
-  lightnessStream.assign( $sliders.lightness, "val" )
+  for name,stream of componentOutputStreams
+    stream.assign( $sliders[name], "val" )
 
-  hueStream.map( Math.round ).assign($(".hue .number"), "text")
-  saturationStream.map( (f)-> f.toFixed(3) ).assign($(".saturation .number"), "text")
-  lightnessStream.map( (f)-> f.toFixed(3) ).assign($(".lightness .number"), "text")
+  for component in ["red","green","blue"]
+    componentOutputStreams[component].map( labelForRgbValue ).assign($labels[component], "text")
+
+  componentOutputStreams.hue.map( Math.round ).assign($labels.hue, "text")
+  componentOutputStreams.saturation.map( (f)-> f.toFixed(3) ).assign($labels.saturation, "text")
+  componentOutputStreams.lightness.map( (f)-> f.toFixed(3) ).assign($labels.lightness, "text")
 
 
 
