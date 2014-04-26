@@ -1,9 +1,17 @@
+inputStreamFrom = ($input)->
+  $input.asEventStream('input').map( (e)-> $(e.target).val() )
 
-#window.hello = ->
-  #html = JST['app/templates/hello.us'](text: helloText())
-  #document.body.innerHTML += html
 
-#if window.addEventListener
-  #window.addEventListener('DOMContentLoaded', hello, false)
-#else
-  #window.attachEvent('onload', hello)
+$ ->
+  sliderStreams = {
+    red: inputStreamFrom( $('.red input') )
+    green: inputStreamFrom( $('.green input') )
+    blue: inputStreamFrom( $('.blue input') )
+  }
+
+  for name,stream of sliderStreams
+    stream.onValue( (v) -> console.log( "#{name} changed", v ) )
+
+    stream.assign($(".#{name} .number"), "text")
+
+

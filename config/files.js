@@ -8,6 +8,12 @@
 module.exports = function(lineman) {
   //Override file patterns here
   return {
+    js: {
+      vendor: [
+          "vendor/bower/jquery/dist/jquery.js",
+          "vendor/bower/bacon/dist/bacon.js"
+        ]
+    }
 
     // As an example, to override the file patterns for
     // the order in which to load third party JS libs:
