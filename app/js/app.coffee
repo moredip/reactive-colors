@@ -66,7 +66,7 @@ masterColorStreamFromInputSliders = ($sliders)->
   masterColorBus = new Bacon.Bus()
 
   sliderStreams = _.object( _.map( $sliders, ($slider,name)->
-    [name,inputStreamFrom($slider,name)]
+    [name,$slider.asObjectifiedProperty(name)]
   ))
 
   rgbInputStream = rgbInputStreamFromSliderStreams(sliderStreams)
@@ -82,11 +82,22 @@ masterColorStreamFromInputSliders = ($sliders)->
 
   masterColorBus.toProperty(masterColor)
 
+assignComponentOutputStreams = (componentOutputStreams, $sliders, $labels)->
+  for name,stream of componentOutputStreams
+    $sliders[name].assignFromStream(stream)
+
+  for component in ["red","green","blue"]
+    componentOutputStreams[component].map( labelForRgbValue ).assign($labels[component], "text")
+
+  componentOutputStreams.hue.map( Math.round ).assign($labels.hue, "text")
+  componentOutputStreams.saturation.map( (f)-> f.toFixed(3) ).assign($labels.saturation, "text")
+  componentOutputStreams.lightness.map( (f)-> f.toFixed(3) ).assign($labels.lightness, "text")
+
 $ ->
   $swatch = $("#swatch")
 
   $sliders = _.object( _.map( COMPONENTS, (name)->
-    [name, $(".#{name} input")]
+    [name, window.rc.createBaconicInput( $(".#{name} input") )]
   ))
 
   $labels = _.object( _.map( COMPONENTS, (name)->
@@ -100,18 +111,5 @@ $ ->
     updateSwatch( $swatch, color )
 
   componentOutputStreams = componentOutputStreamsFromMainStream( colorStream )
-
-  for name,stream of componentOutputStreams
-    stream.assign( $sliders[name], "val" )
-
-  for component in ["red","green","blue"]
-    componentOutputStreams[component].map( labelForRgbValue ).assign($labels[component], "text")
-
-  componentOutputStreams.hue.map( Math.round ).assign($labels.hue, "text")
-  componentOutputStreams.saturation.map( (f)-> f.toFixed(3) ).assign($labels.saturation, "text")
-  componentOutputStreams.lightness.map( (f)-> f.toFixed(3) ).assign($labels.lightness, "text")
-
-
-
-
+  assignComponentOutputStreams( componentOutputStreams, $sliders, $labels )
 
