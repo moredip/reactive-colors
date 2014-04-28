@@ -9,14 +9,14 @@ decimalToHex = (d)->
   pad2( Math.round(d).toString(16) )
 
 
-inputStreamFrom = ($input)->
+inputStreamFrom = ($input,name)->
   stream = $input.asEventStream('input')
     .map( (e)-> $(e.target).val() )
     .toProperty( $input.val() )
-    .map( parseFloat )
+    .map (v)->
+      _.object( [[name,parseFloat(v)]] )
 
-  stream.onValue (v)->
-    console.log( $input.parent().attr("class"), v )
+  # stream.onValue (v)-> console.log( v )
 
   stream
 
@@ -46,23 +46,41 @@ componentOutputStreamsFromMainStream = (colorStream)->
     lightness: hslStream.map( ".l" )
   }
 
-  
-mainColorStreamFromInputSliders = ($sliders)->
+rgbInputStreamFromSliderStreams = (sliderStreams)->
+  rgbSliderStreams = _.pick(sliderStreams,"red","green","blue")
+  rgbEventStreams = (stream.changes() for name,stream of rgbSliderStreams)
+
+  Bacon.mergeAll(rgbEventStreams).map ({red,green,blue})->
+    {r:red,g:green,b:blue}
+
+hslInputStreamFromSliderStreams = (sliderStreams)->
+  hslSliderStreams = _.pick(sliderStreams,"hue","saturation","lightness")
+  hslEventStreams = (stream.changes() for name,stream of hslSliderStreams)
+
+  Bacon.mergeAll(hslEventStreams).map ({hue,saturation,lightness})->
+    {h:hue,l:lightness,s:saturation}
+
+
+masterColorStreamFromInputSliders = ($sliders)->
+  masterColor = tinycolor("#aabbcc")
+  masterColorBus = new Bacon.Bus()
+
   sliderStreams = _.object( _.map( $sliders, ($slider,name)->
-    [name,inputStreamFrom($slider)]
+    [name,inputStreamFrom($slider,name)]
   ))
 
-  rgbSliderStreams = _.pick(sliderStreams,"red","green","blue")
-  hslSliderStreams = _.pick(sliderStreams,"hue","saturation","lightness")
+  rgbInputStream = rgbInputStreamFromSliderStreams(sliderStreams)
+  hslInputStream = hslInputStreamFromSliderStreams(sliderStreams)
 
-  rgbInputStream = Bacon.combineTemplate( rgbSliderStreams ).map ({red,green,blue})->
-    tinycolor({r:red,g:green,b:blue})
+  rgbInputStream.onValue (rgb)->
+    masterColor = tinycolor( _.defaults( rgb, masterColor.toRgb() ) )
+    masterColorBus.push(masterColor)
 
-  hslInputStream = Bacon.combineTemplate( hslSliderStreams ).map ({hue,saturation,lightness})->
-    tinycolor({h:hue,s:saturation,l:lightness})
-  
-  colorStream = Bacon.mergeAll( [rgbInputStream.changes(), hslInputStream.changes()] )
-  colorStream
+  hslInputStream.onValue (hsl)->
+    masterColor = tinycolor( _.defaults( hsl, masterColor.toHsl() ) )
+    masterColorBus.push(masterColor)
+
+  masterColorBus.toProperty(masterColor)
 
 $ ->
   $swatch = $("#swatch")
@@ -75,7 +93,7 @@ $ ->
     [name, $(".#{name} .number")]
   ))
 
-  colorStream = mainColorStreamFromInputSliders($sliders)
+  colorStream = masterColorStreamFromInputSliders($sliders)
 
   colorStream.onValue (color)->
     console.log( "color changed", color.toRgbString(), color.toHslString() )
