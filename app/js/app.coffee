@@ -75,10 +75,6 @@ $ ->
     [name, $(".#{name} .number")]
   ))
 
-  sliderStreams = _.object( _.map( $sliders, ($slider,name)->
-    [name,inputStreamFrom($slider)]
-  ))
-
   colorStream = mainColorStreamFromInputSliders($sliders)
 
   colorStream.onValue (color)->
