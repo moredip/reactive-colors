@@ -13,10 +13,7 @@ module.exports = function(lineman) {
           "vendor/bower/jquery/dist/jquery.js",
           "vendor/bower/bacon/dist/bacon.js",
           "vendor/bower/tinycolor/tinycolor.js",
-          "vendor/bower/underscore/underscore.js",
-
-          "vendor/bower/sinonjs/sinon.js",
-          "vendor/bower/jasmine-sinon/lib/jasmine-sinon.js"
+          "vendor/bower/underscore/underscore.js"
         ]
     }
 

@@ -21,7 +21,7 @@ describe 'e2e: ', ->
       baconicInput.asProperty().onValue( streamSpy )
 
       # Then
-      expect(streamSpy).toHaveBeenCalledWith(22)
+      expect(streamSpy).calledWith(22)
 
     it 'streams changes to input value', ->
       # Given
@@ -32,4 +32,4 @@ describe 'e2e: ', ->
       $input.val('55').trigger("input")
 
       # Then
-      expect(streamSpy).toHaveBeenCalledWith(55)
+      expect(streamSpy).calledWith(55)

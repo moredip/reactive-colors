@@ -21,6 +21,5 @@
     "underscore": "~1.6.0"
   },
   "devDependencies": {
-    "jasmine-sinon": "~0.3.1"
   }
 }
