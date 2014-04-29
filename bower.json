@@ -19,5 +19,8 @@
     "jquery": "~2.1.0",
     "bacon": "~0.7.10",
     "underscore": "~1.6.0"
+  },
+  "devDependencies": {
+    "jasmine-sinon": "~0.3.1"
   }
 }

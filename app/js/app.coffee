@@ -8,18 +8,6 @@ pad2 = (c)->
 decimalToHex = (d)->
   pad2( Math.round(d).toString(16) )
 
-
-inputStreamFrom = ($input,name)->
-  stream = $input.asEventStream('input')
-    .map( (e)-> $(e.target).val() )
-    .toProperty( $input.val() )
-    .map (v)->
-      _.object( [[name,parseFloat(v)]] )
-
-  # stream.onValue (v)-> console.log( v )
-
-  stream
-
 updateSwatch = ($swatch,color)->
   hashHex = "#"+color.toHex()
   $swatch
