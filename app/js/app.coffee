@@ -53,9 +53,8 @@ masterColorStreamFromInputSliders = ($sliders)->
   masterColor = tinycolor("#aabbcc")
   masterColorBus = new Bacon.Bus()
 
-  sliderStreams = _.object( _.map( $sliders, ($slider,name)->
-    [name,$slider.asObjectifiedProperty(name)]
-  ))
+  sliderStreams = _.mapValues $sliders, ($slider,name)->
+    $slider.asObjectifiedProperty(name)
 
   rgbInputStream = rgbInputStreamFromSliderStreams(sliderStreams)
   hslInputStream = hslInputStreamFromSliderStreams(sliderStreams)
