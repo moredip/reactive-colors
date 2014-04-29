@@ -1,18 +1,10 @@
 describe 'e2e: ', ->
-  $fixture = -> $('body > .fixture')
-  
-  beforeEach ->
-    $('body').append('<div class="fixture"/>')
-
-  afterEach ->
-    $fixture().remove()
-
   describe 'baconic range input', ->
     $input = undefined
     baconicInput = undefined
 
     beforeEach ->
-      $input = $('<input type="range" min="0" max="100" value="22"/>').appendTo($fixture())
+      $input = fixture('<input type="range" min="0" max="100" value="22"/>')
       baconicInput = window.rc.createBaconicInput( $input )
 
     it "has an initial property", ->
