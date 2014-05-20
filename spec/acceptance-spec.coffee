@@ -20,7 +20,7 @@ describe 'multiple sliders', ->
     updateSliderVal( $sliders.blue, "30" )
 
     # Then
-    expect($label.text()).equal( "red: 10 green: 20 blue: 30" )
+    expect($label.text()).equal( "rgb(10, 20, 30)" )
 
   it 'updates a background color', ->
     # Given 
@@ -46,4 +46,4 @@ describe 'multiple sliders', ->
     window.rc.wireUpRgbSliders( {$sliders,$label} )
 
     # Then
-    expect($label.text()).equal( "red: 53 green: 21 blue: 87" )
+    expect($label.text()).equal( "rgb(53, 21, 87)" )
