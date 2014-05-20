@@ -18,6 +18,13 @@ window.rc.wireUpRgbSliders = ({$sliders,$label})->
 
   combinedStream = Bacon.combineTemplate( propertyStreams )
 
+  colorStream = combinedStream.map ({red,green,blue})->
+    tinycolor( r:red,g:green,b:blue )
+
+  colorStream
+    .map( (tc)-> tc.toHexString() )
+    .assign( $label, "css", "background-color" )
+
   formattedStream = combinedStream.map ({red,green,blue})->
     "red: #{red} green: #{green} blue: #{blue}"
 

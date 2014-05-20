@@ -4,14 +4,14 @@ html {
 
 body > h1 {
   font-weight: 100;
-  font-size: 60pt;
+  font-size: 80pt;
   margin: -19px 0;
   text-align: right;
   color: #777;
 }  
 
 hr {
-  margin-right: 46px;
+  margin-right: 60px;
 }
 
 .sliders {
